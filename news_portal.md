@@ -51,6 +51,14 @@ TEMPLATES = [
 
 ```
 
+### Update static path in setting.py
+`./newsportal/settings.py`
+```python
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
+```
+
 ## Manage user
 
 # Add User models
@@ -147,6 +155,69 @@ https://themewagon.com/themes/free-bootstrap-4-html5-news-website-template-news/
 add it to the templates folder in root directory
 
 `./templates`
+
+
+## create template views for each pages
+`./news/views.py`
+```python
+from django.shortcuts import render
+from django.views.generic import TemplateView
+
+
+# Create your views here.
+
+class HomePageView(TemplateView):
+    template_name = 'index.html'
+
+
+class CategoryPageView(TemplateView):
+    template_name = 'category.html'
+
+
+class AboutUsPageView(TemplateView):
+    template_name = 'about.html'
+
+
+class ContactPageView(TemplateView):
+    template_name = 'contact.html'
+
+
+class LatestNewsPageView(TemplateView):
+    template_name = 'latest_news.html'
+
+```
+
+### Create url to serve pages
+`./news.urls.py`
+```python
+from django.urls import path
+from .views import AboutUsPageView, ContactPageView, LatestNewsPageView, CategoryPageView
+
+urlpatterns = [
+    path('about', AboutUsPageView.as_view(), name='about'),
+    path('contact', ContactPageView.as_view(), name='contact'),
+    path('latest', LatestNewsPageView.as_view(), name='latest_news'),
+    path('category', CategoryPageView.as_view(), name='category'),
+]
+```
+
+### Include url to main project url
+`./newsportal/urls.py`
+```python
+from django.contrib import admin
+from django.urls import path, include
+from news.views import HomePageView
+from django.conf import settings
+from django.conf.urls.static import static
+
+urlpatterns = [
+    path('', HomePageView.as_view(), name='home'),
+    path('admin/', admin.site.urls),
+    path('accounts/', include('account.urls')),
+    path('news/', include('news.urls')),
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
+```
 
 ## Create master layout
 `./templates/master.html`
