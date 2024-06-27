@@ -1,0 +1,17 @@
+.responsive-img {
+    width: 100%;
+    height: auto;
+    display: block;
+    min-height: 600px; /* Adjust the max height as needed */
+    max-height: 600px;
+    object-fit: cover; /* This ensures the image covers the container while maintaining aspect ratio */
+}
+
+.responsive-img-v2 {
+    width: 100%;
+    height: auto;
+    display: block;
+    min-height: 285px; /* Adjust the max height as needed */
+    max-height: 285px;
+    object-fit: cover; /* This ensures the image covers the container while maintaining aspect ratio */
+}
