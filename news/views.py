@@ -14,15 +14,15 @@ class HomePageView(TemplateView):
         context['trending'] = News.objects.all().order_by('-pub_date')[:3]
         context['right_content'] = News.objects.all().order_by('-pub_date')[3:5]
         # return context
-        # categories = Category.objects.all()[:6]
-        # context['news'] = {}
-        # context['categories'] = []
-        # for category in categories:
-        #     news = News.objects.filter(category=category.id).order_by('-pub_date')[:5]
-        #     if news:
-        #         context['categories'].append(category)
-        #         context['news'][category.name] = news
-        # return context
+        categories = Category.objects.all()[:6]
+        context['news'] = {}
+        context['categories'] = []
+        for category in categories:
+            news = News.objects.filter(category=category.id).order_by('-pub_date')[:5]
+            if news:
+                context['categories'].append(category)
+                context['news'][category.name] = news
+        return context
 
 
 class CategoryPageView(TemplateView):
