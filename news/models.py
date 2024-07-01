@@ -3,11 +3,14 @@ from django.utils import timezone
 from datetime import timedelta
 
 from account.models import User
+from auditlog.models import AuditlogHistoryField
+from auditlog.registry import auditlog
 
 
 class Category(models.Model):
     name = models.CharField(max_length=255)
     display_in_home = models.BooleanField(default=False)
+    history = AuditlogHistoryField()
 
     class Meta:
         ordering = ['name']
@@ -36,13 +39,14 @@ class Category(models.Model):
 class News(models.Model):
     title = models.CharField(max_length=255)
     content = models.TextField()
-    image = models.ImageField()
+    image = models.ImageField(blank=True, null=True)
     image_url = models.URLField(blank=True, null=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     pub_date = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     views = models.PositiveIntegerField(default=0)
+    history = AuditlogHistoryField()
 
     class Meta:
         ordering = ['title']
@@ -68,7 +72,6 @@ class News(models.Model):
         return cls.objects.order_by('-views')[:10]
 
 
-
 # class FanFollow(models.Model):
 #     icon = models.ImageField()
 #     name = models.CharField(max_length=255)
@@ -86,5 +89,5 @@ class News(models.Model):
 #     location = models.CharField(max_length=255) // top_homepage , right_homepage, footer
 
 
-
-
+auditlog.register(Category, serialize_data=True)
+auditlog.register(News, serialize_data=True)
