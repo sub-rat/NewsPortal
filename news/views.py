@@ -1,4 +1,6 @@
-import time
+import datetime
+
+from django.http import HttpResponse
 from django.utils import timezone
 
 from django.core.serializers.json import Serializer
@@ -34,10 +36,23 @@ class HomePageView(TemplateView):
                 'id': news.id,
                 'image': news.image.url if news.image else '',
                 'image_url': news.image_url,
-                'duration': f'{(timezone.now()-news.created_at).total_seconds()/3600:.1f} hour',
+                'duration': f'{(timezone.now() - news.created_at).total_seconds() / 3600:.1f} hour',
             })
         self.request.session['popular'] = data
         return context
+
+    def get(self, request, *args, **kwargs):
+        response = super().get(request, *args, **kwargs)
+        response.cookies['name'] = 'subrat gyawali'
+        response.cookies['test'] = 'value'
+        set_cookie(
+            response=response,
+            key="COOKIE_KEY",
+            value="COOKIE_VALUE",
+            cookie_host=request.get_host(),
+            days_expire=7,
+        )
+        return response
 
 
 class CategoryPageView(TemplateView):
@@ -68,3 +83,23 @@ class DetailPageView(TemplateView):
         return context
 
 
+def set_cookie(
+        response: HttpResponse,
+        key: str,
+        value: str,
+        cookie_host: str,
+        days_expire: int = 365,
+):
+    max_age = days_expire * 24 * 60 * 60
+    expires = datetime.datetime.strftime(
+        datetime.datetime.utcnow() + datetime.timedelta(days=days_expire), "%a, %d-%b-%Y %H:%M:%S GMT",
+    )
+    domain = cookie_host.split(":")[0]
+    response.set_cookie(
+        key,
+        value,
+        max_age=max_age,
+        expires=expires,
+        domain=domain,
+        secure=False,
+    )
